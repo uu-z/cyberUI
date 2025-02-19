@@ -1,13 +1,30 @@
 import type { ReactNode } from "react";
 
-export interface FieldProps {
-    value: any;
-    onChange: (value: any, field?: string) => void;
-    onClick?: (event: any) => void;
+export interface EnumOption {
+    label: string;
+    value: string;
+}
+
+export interface FieldConfig<T = any> {
     required?: boolean;
-    enum?: Array<string | { value: string; label: string }>;
+    enum?: Array<string | EnumOption>;
     columns?: number;
-    [key: string]: any;
+    disabled?: boolean;
+    readOnly?: boolean;
+    placeholder?: string;
+    gap?: string;
+    onChange?: (value: T) => void;
+    onClick?: (event: React.MouseEvent) => void;
+    responsive?: boolean;
+}
+
+export type Config<T> = {
+    [K in keyof T]?: FieldConfig<T[K]>;
+};
+
+export interface FieldProps<T = any> extends FieldConfig<T> {
+    value: T;
+    setState?: (value: T) => void;
 }
 
 export interface Widget {

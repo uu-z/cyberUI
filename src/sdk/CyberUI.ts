@@ -1,11 +1,11 @@
 import { makeAutoObservable } from "mobx";
-import type { Widget } from "./types";
+import type { Widget, Config } from "./types";
 import { createWidgetModule } from "./modules/widget";
 import { createPluginModule, type Plugin } from "./modules/plugin";
 
 export type Store<T> = {
   state: T;
-  setState(key: keyof T, value: any): void;
+  setState(key: keyof T, value: T[keyof T]): void;
 }
 
 export type StoreWithModules<T> = Store<T> & {
@@ -17,16 +17,18 @@ export const CyberUI = (options: {
   theme: {
     widget: Widget;
     plugin: Plugin;
-  }
+  };
 }) => {
   const createStore = <T extends Record<string, any>>(config: {
     state: T;
-    config?: Partial<Record<keyof T, any>>;
+    config?: Config<T>;
   }) => {
     const store = makeAutoObservable({
       state: config.state as T,
-      setState(key: keyof T, value: any) {
+      setState(key: keyof T, value: T[keyof T]) {
+        const fieldConfig = config.config?.[key];
         this.state[key] = value;
+        fieldConfig?.onChange?.(value);
       }
     }) as Store<T>;
 

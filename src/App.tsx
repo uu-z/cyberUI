@@ -25,23 +25,25 @@ const App = () => {
       },
       username: {
         required: true,
+        onChange(newVal: string) {
+          console.log("change val", newVal);
+        },
       },
       role: {
         enum: ["user", "admin", "moderator"],
       },
       users: {
-        columns: 2,
-        gap: 10,
-        onChange(newVal: any) {},
+        columns: 5,
+        gap: "10px",
         onClick() {
-          console.log("on click");
+          console.log("onClick");
         },
       },
     },
   });
   return (
-    <div style={containerStyle}>
-      <h1 style={titleStyle}>CyberUI Demo</h1>
+    <div className="max-w-[1920px] mx-auto my-10 p-8 bg-[rgba(10,10,10,0.95)] border border-[#00ff9f] shadow-[0_0_20px_rgba(0,255,159,0.2)] rounded relative overflow-hidden">
+      <h1 className="text-[#00ff9f] mb-6 text-2xl">CyberUI Demo</h1>
 
       <store.widget.navigation.menu />
 
@@ -58,33 +60,5 @@ const App = () => {
     </div>
   );
 };
-
-const containerStyle = {
-  maxWidth: "800px",
-  margin: "40px auto",
-  padding: "30px",
-  backgroundColor: "rgba(10, 10, 10, 0.95)",
-  border: "1px solid #00ff9f",
-  boxShadow: "0 0 20px rgba(0, 255, 159, 0.2)",
-  borderRadius: "4px",
-  position: "relative",
-  overflow: "hidden",
-} as const;
-
-const titleStyle = {
-  color: "#00ff9f",
-  marginBottom: "24px",
-  fontSize: "24px",
-} as const;
-
-const sectionStyle = {
-  marginBottom: "24px",
-} as const;
-
-const sectionTitleStyle = {
-  color: "#00ff9f",
-  marginBottom: "16px",
-  fontSize: "18px",
-} as const;
 
 export default App;

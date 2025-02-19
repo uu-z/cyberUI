@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { Widget } from "../types";
+import type { Widget, Config } from "../types";
 import { observer } from "mobx-react-lite";
 
 export function createWidgetModule<T extends Record<string, any>>(options: {
@@ -8,7 +8,7 @@ export function createWidgetModule<T extends Record<string, any>>(options: {
         state: T;
         setState(key: keyof T, value: any): void;
     };
-    config?: Partial<Record<keyof T, any>>;
+    config?: Config<T>;
 }) {
     // Cache for UI components
     const componentCache = new WeakMap();
@@ -36,17 +36,7 @@ export function createWidgetModule<T extends Record<string, any>>(options: {
                             componentCache.set(cacheKey, observer((props: any): ReactNode =>
                                 ComponentOrNested({
                                     value: options.store.state[stateProp as keyof T],
-                                    onChange: (newValue: any, field?: string) => {
-                                        options.store.setState(stateProp as keyof T, newValue);
-                                        if (fieldConfig.onChange) {
-                                            fieldConfig.onChange(newValue, field || stateProp);
-                                        }
-                                    },
-                                    onClick: (event: any) => {
-                                        if (fieldConfig.onClick) {
-                                            fieldConfig.onClick(event, stateProp);
-                                        }
-                                    },
+                                    setState: (value: any) => options.store.setState(stateProp, value),
                                     ...fieldConfig,
                                     ...props
                                 })

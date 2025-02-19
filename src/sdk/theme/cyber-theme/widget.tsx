@@ -1,41 +1,27 @@
 import type { FieldProps } from "../../types";
+import GridContainer from "./GridContainer";
 
 const widget = {
-  table: ({ value, gap = "12px" }: FieldProps) => {
+  table: ({ value, gap = "12px", responsive = true }: FieldProps) => {
     if (!Array.isArray(value) || value.length === 0) return null;
-
-    const headerStyle = {
-      padding: gap,
-      textAlign: "left",
-      color: "#00ff9f",
-      borderBottom: "1px solid #00ff9f",
-      background: "rgba(0, 255, 159, 0.1)",
-      fontWeight: "normal",
-    } as const;
-
-    const cellStyle = {
-      padding: gap,
-      color: "#fff",
-      borderBottom: "1px solid rgba(0, 255, 159, 0.2)",
-    } as const;
-
-    const tableStyle = {
-      width: "100%",
-      borderCollapse: "collapse",
-      marginBottom: gap,
-      border: "1px solid #00ff9f",
-      borderRadius: "4px",
-      overflow: "hidden",
-    } as const;
-
     const columns = Object.keys(value[0]);
 
     return (
-      <table style={tableStyle}>
+      <table className="w-full border-collapse border border-cyber-primary rounded overflow-hidden">
         <thead>
           <tr>
             {columns.map((column) => (
-              <th key={column} style={headerStyle}>
+              <th
+                key={column}
+                className={`text-left text-cyber-primary border-b border-cyber-primary bg-cyber-primary/10 font-normal
+                  ${responsive ? "sm:p-2.5 md:p-3 lg:p-4" : "p-3"}
+                  ${
+                    responsive
+                      ? "sm:text-xs md:text-base lg:text-lg"
+                      : "text-base"
+                  }
+                `}
+              >
                 {column}
               </th>
             ))}
@@ -45,7 +31,17 @@ const widget = {
           {value.map((row, rowIndex) => (
             <tr key={rowIndex}>
               {columns.map((column) => (
-                <td key={column} style={cellStyle}>
+                <td
+                  key={column}
+                  className={`text-cyber-text border-b border-cyber-primary/20
+                    ${responsive ? "sm:p-2 md:p-3 lg:p-4" : "p-3"}
+                    ${
+                      responsive
+                        ? "sm:text-sm md:text-base lg:text-lg"
+                        : "text-base"
+                    }
+                  `}
+                >
                   {String(row[column])}
                 </td>
               ))}
@@ -56,141 +52,106 @@ const widget = {
     );
   },
 
-  list: ({ value, columns = 1, gap = "16px", onClick }: FieldProps) => (
-    <div
-      style={{
-        marginBottom: gap,
-        display: "grid",
-        gridTemplateColumns: `repeat(${columns}, 1fr)`,
-        gap,
-      }}
-    >
+  list: ({
+    value,
+    onClick,
+    columns = 3,
+    gap = "16px",
+    responsive = true,
+  }: FieldProps) => (
+    <GridContainer columns={columns} gap={gap} className="mb-4">
       {Array.isArray(value) &&
         value.map((item, index) => (
           <div
             key={index}
             onClick={onClick}
-            style={{
-              padding: gap,
-              backgroundColor: "rgba(0, 0, 0, 0.3)",
-              border: "1px solid #00ff9f",
-              borderRadius: "4px",
-              color: "#fff",
-              display: "flex",
-              alignItems: "center",
-              gap,
-              cursor: onClick ? "pointer" : "default",
-              transition: "all 0.3s ease",
-            }}
-            onMouseOver={(e) => {
-              if (onClick) {
-                e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.4)";
-                e.currentTarget.style.transform = "translateY(-2px)";
-                e.currentTarget.style.boxShadow =
-                  "0 4px 12px rgba(0, 255, 159, 0.2)";
-              }
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.3)";
-              e.currentTarget.style.transform = "none";
-              e.currentTarget.style.boxShadow = "none";
-            }}
+            className={`bg-cyber-bg border border-cyber-primary rounded text-cyber-text flex items-center transition-cyber duration-cyber ease-cyber
+              ${responsive ? "sm:p-3 md:p-3.5 lg:p-4" : "p-4"}
+              ${responsive ? "sm:gap-3 md:gap-3 lg:gap-4" : "gap-4"}
+              ${
+                onClick
+                  ? "cursor-pointer hover:bg-cyber-bg-hover hover:transform hover:-translate-y-0.5 hover:shadow-cyber"
+                  : "cursor-default"
+              }`}
           >
             <div
-              style={{
-                width: "48px",
-                height: "48px",
-                backgroundColor: "rgba(0, 255, 159, 0.1)",
-                border: "1px solid #00ff9f",
-                borderRadius: "50%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                flexShrink: 0,
-              }}
+              className={`bg-cyber-primary/10 border border-cyber-primary rounded-full flex items-center justify-center shrink-0
+              ${
+                responsive
+                  ? "sm:w-12 sm:h-12 md:w-12 md:h-12 lg:w-12 lg:h-12"
+                  : "w-12 h-12"
+              }
+              min-w-[3rem] min-h-[3rem]
+            `}
             >
               {item.avatar ? (
                 <img
                   src={item.avatar}
                   alt={item.title}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    borderRadius: "50%",
-                    objectFit: "cover",
-                  }}
+                  className="w-full h-full rounded-full object-cover object-center"
                 />
               ) : (
-                <span style={{ color: "#00ff9f", fontSize: "20px" }}>
+                <span
+                  className={`text-cyber-primary
+                  ${
+                    responsive
+                      ? "sm:text-base md:text-lg lg:text-xl"
+                      : "text-lg"
+                  }
+                `}
+                >
                   {item.title.charAt(0)}
                 </span>
               )}
             </div>
             <div>
               <div
-                style={{
-                  color: "#00ff9f",
-                  fontSize: "16px",
-                  marginBottom: "4px",
-                  fontWeight: "500",
-                }}
+                className={`text-cyber-primary mb-1 font-medium
+                ${
+                  responsive
+                    ? "sm:text-sm md:text-base lg:text-lg"
+                    : "text-base"
+                }
+              `}
               >
                 {item.title}
               </div>
               <div
-                style={{
-                  color: "rgba(255, 255, 255, 0.7)",
-                  fontSize: "14px",
-                }}
+                className={`text-cyber-text-secondary
+                ${responsive ? "sm:text-xs md:text-sm lg:text-base" : "text-sm"}
+              `}
               >
                 {item.desc}
               </div>
             </div>
           </div>
         ))}
-    </div>
+    </GridContainer>
   ),
 
   input: ({
     value,
+    setState,
+    required,
     onChange,
     onClick,
-    required,
-    gap = "16px",
+    responsive = true,
     ...props
   }: FieldProps) => (
     <input
       value={value}
-      onChange={(e) => onChange(e.target.value)}
+      onChange={(e) => {
+        setState?.(e.target.value);
+        onChange?.(e.target.value);
+      }}
       onClick={onClick}
-      style={{
-        width: "100%",
-        padding: "8px 12px",
-        marginBottom: gap,
-        backgroundColor: "rgba(0, 0, 0, 0.3)",
-        border: "1px solid #00ff9f",
-        borderRadius: "4px",
-        color: "#fff",
-        outline: "none",
-        transition: "all 0.3s ease",
-        cursor: onClick ? "pointer" : "text",
-      }}
-      onMouseOver={(e) => {
-        e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.4)";
-        e.currentTarget.style.boxShadow = "0 0 10px rgba(0, 255, 159, 0.2)";
-      }}
-      onMouseOut={(e) => {
-        e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.3)";
-        e.currentTarget.style.boxShadow = "none";
-      }}
-      onFocus={(e) => {
-        e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
-        e.currentTarget.style.boxShadow = "0 0 15px rgba(0, 255, 159, 0.3)";
-      }}
-      onBlur={(e) => {
-        e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.3)";
-        e.currentTarget.style.boxShadow = "none";
-      }}
+      className={`w-full bg-cyber-bg border border-cyber-primary rounded text-cyber-text outline-none 
+        transition-cyber duration-cyber ease-cyber mb-4
+        ${responsive ? "sm:p-2.5 md:p-3 lg:p-4" : "p-3"}
+        ${responsive ? "sm:text-xs md:text-base lg:text-lg" : "text-base"}
+        ${onClick ? "cursor-pointer" : "cursor-text"}
+        hover:bg-cyber-bg-hover hover:shadow-cyber focus:bg-cyber-bg-active focus:shadow-cyber-active
+      `}
       required={required}
       {...props}
     />
@@ -198,44 +159,26 @@ const widget = {
 
   select: ({
     value,
+    setState,
+    enum: options = [],
     onChange,
     onClick,
-    enum: options = [],
-    gap = "16px",
+    responsive = true,
     ...props
   }: FieldProps) => (
     <select
       value={value}
-      onChange={(e) => onChange(e.target.value)}
+      onChange={(e) => {
+        setState?.(e.target.value);
+        onChange?.(e.target.value);
+      }}
       onClick={onClick}
-      style={{
-        width: "100%",
-        padding: "8px 12px",
-        marginBottom: gap,
-        backgroundColor: "rgba(0, 0, 0, 0.3)",
-        border: "1px solid #00ff9f",
-        borderRadius: "4px",
-        color: "#fff",
-        outline: "none",
-        cursor: "pointer",
-        transition: "all 0.3s ease",
-      }}
-      onMouseOver={(e) => {
-        e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.4)";
-        e.currentTarget.style.boxShadow = "0 0 10px rgba(0, 255, 159, 0.2)";
-      }}
-      onMouseOut={(e) => {
-        e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.3)";
-        e.currentTarget.style.boxShadow = "none";
-      }}
-      onFocus={(e) => {
-        e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
-        e.currentTarget.style.boxShadow = "0 0 15px rgba(0, 255, 159, 0.3)";
-      }}
-      onBlur={(e) => {
-        e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.3)";
-        e.currentTarget.style.boxShadow = "none";
-      }}
+      className={`w-full bg-cyber-bg border border-cyber-primary rounded text-cyber-text outline-none 
+        transition-cyber duration-cyber ease-cyber mb-4 cursor-pointer
+        ${responsive ? "sm:p-2.5 md:p-3 lg:p-4" : "p-3"}
+        ${responsive ? "sm:text-xs md:text-base lg:text-lg" : "text-base"}
+        hover:bg-cyber-bg-hover hover:shadow-cyber focus:bg-cyber-bg-active focus:shadow-cyber-active
+      `}
       {...props}
     >
       {Array.isArray(options) &&
@@ -251,152 +194,63 @@ const widget = {
     </select>
   ),
 
-  radio: ({ value, onChange, onClick, gap = "16px", ...props }: FieldProps) => (
+  radio: ({
+    value,
+    setState,
+    onChange,
+    onClick,
+    responsive = true,
+    ...props
+  }: FieldProps) => (
     <div
-      style={{
-        marginBottom: gap,
-        display: "flex",
-        flexDirection: "column",
-        gap,
-        padding: "12px 16px",
-        backgroundColor: "rgba(0, 0, 0, 0.5)",
-        border: "1px solid #00ff9f",
-        borderRadius: "6px",
-        boxShadow: "0 0 10px rgba(0, 255, 159, 0.1)",
-        position: "relative",
-        overflow: "hidden",
-      }}
+      className={`flex flex-col bg-cyber-bg-active border border-cyber-primary rounded-lg shadow-cyber relative overflow-hidden gap-4 w-full
+      ${
+        responsive
+          ? "sm:p-2.5 sm:px-3 md:p-3 md:px-4 lg:p-4 lg:px-5"
+          : "p-3 px-4"
+      }
+      ${responsive ? "sm:gap-2 md:gap-4 lg:gap-4" : "gap-4"}
+    `}
     >
-      <div
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          height: "1px",
-          background:
-            "linear-gradient(90deg, transparent, #00ff9f, transparent)",
-          opacity: 0.5,
-        }}
-      />
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyber-primary to-transparent opacity-50" />
       <label
         onClick={(e) => {
-          onChange(true);
-          if (onClick) onClick(e);
+          setState?.(true);
+          onChange?.(true);
+          onClick?.(e);
         }}
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "10px",
-          color: value === true ? "#00ff9f" : "rgba(255, 255, 255, 0.8)",
-          cursor: "pointer",
-          padding: "6px 16px",
-          backgroundColor:
-            value === true ? "rgba(0, 255, 159, 0.15)" : "rgba(0, 0, 0, 0.3)",
-          borderRadius: "4px",
-          transition: "all 0.3s ease",
-          border: `1px solid ${value === true ? "#00ff9f" : "transparent"}`,
-          boxShadow:
-            value === true ? "0 0 15px rgba(0, 255, 159, 0.2)" : "none",
-          fontWeight: value === true ? "500" : "normal",
-        }}
-        onMouseOver={(e) => {
-          if (value !== true) {
-            e.currentTarget.style.backgroundColor = "rgba(0, 255, 159, 0.05)";
-            e.currentTarget.style.boxShadow = "0 0 10px rgba(0, 255, 159, 0.1)";
-          }
-        }}
-        onMouseOut={(e) => {
-          if (value !== true) {
-            e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.3)";
-            e.currentTarget.style.boxShadow = "none";
-          }
-        }}
+        className={`flex items-center gap-2.5 cursor-pointer p-1.5 px-4 rounded transition-cyber duration-cyber ease-cyber ${
+          value === true
+            ? "text-cyber-primary bg-cyber-primary/15 border border-cyber-primary shadow-cyber font-medium"
+            : "text-cyber-text-secondary bg-cyber-bg border border-transparent hover:bg-cyber-primary/5 hover:shadow-cyber"
+        }`}
       >
-        <div
-          style={{
-            width: "18px",
-            height: "18px",
-            borderRadius: "50%",
-            border: "2px solid #00ff9f",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            position: "relative",
-            transition: "all 0.2s ease",
-          }}
-        >
+        <div className="w-[18px] h-[18px] rounded-full border-2 border-cyber-primary flex items-center justify-center relative transition-fast">
           <div
-            style={{
-              width: "10px",
-              height: "10px",
-              borderRadius: "50%",
-              backgroundColor: "#00ff9f",
-              opacity: value === true ? 1 : 0,
-              transform: value === true ? "scale(1)" : "scale(0)",
-              transition: "all 0.2s ease",
-            }}
+            className={`w-2.5 h-2.5 rounded-full bg-cyber-primary transition-transform duration-200 ${
+              value === true ? "opacity-100 scale-100" : "opacity-0 scale-0"
+            }`}
           />
         </div>
         True
       </label>
       <label
         onClick={(e) => {
-          onChange(false);
-          if (onClick) onClick(e);
+          setState?.(false);
+          onChange?.(false);
+          onClick?.(e);
         }}
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "10px",
-          color: value === false ? "#00ff9f" : "rgba(255, 255, 255, 0.8)",
-          cursor: "pointer",
-          padding: "6px 16px",
-          backgroundColor:
-            value === false ? "rgba(0, 255, 159, 0.15)" : "rgba(0, 0, 0, 0.3)",
-          borderRadius: "4px",
-          transition: "all 0.3s ease",
-          border: `1px solid ${value === false ? "#00ff9f" : "transparent"}`,
-          boxShadow:
-            value === false ? "0 0 15px rgba(0, 255, 159, 0.2)" : "none",
-          fontWeight: value === false ? "500" : "normal",
-        }}
-        onMouseOver={(e) => {
-          if (value !== false) {
-            e.currentTarget.style.backgroundColor = "rgba(0, 255, 159, 0.05)";
-            e.currentTarget.style.boxShadow = "0 0 10px rgba(0, 255, 159, 0.1)";
-          }
-        }}
-        onMouseOut={(e) => {
-          if (value !== false) {
-            e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.3)";
-            e.currentTarget.style.boxShadow = "none";
-          }
-        }}
+        className={`flex items-center gap-2.5 cursor-pointer p-1.5 px-4 rounded transition-cyber duration-cyber ease-cyber ${
+          value === false
+            ? "text-cyber-primary bg-cyber-primary/15 border border-cyber-primary shadow-cyber font-medium"
+            : "text-cyber-text-secondary bg-cyber-bg border border-transparent hover:bg-cyber-primary/5 hover:shadow-cyber"
+        }`}
       >
-        <div
-          style={{
-            width: "18px",
-            height: "18px",
-            borderRadius: "50%",
-            border: "2px solid #00ff9f",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            position: "relative",
-            transition: "all 0.2s ease",
-          }}
-        >
+        <div className="w-[18px] h-[18px] rounded-full border-2 border-cyber-primary flex items-center justify-center relative transition-fast">
           <div
-            style={{
-              width: "10px",
-              height: "10px",
-              borderRadius: "50%",
-              backgroundColor: "#00ff9f",
-              opacity: value === false ? 1 : 0,
-              transform: value === false ? "scale(1)" : "scale(0)",
-              transition: "all 0.2s ease",
-            }}
+            className={`w-2.5 h-2.5 rounded-full bg-cyber-primary transition-transform duration-200 ${
+              value === false ? "opacity-100 scale-100" : "opacity-0 scale-0"
+            }`}
           />
         </div>
         False
@@ -404,107 +258,126 @@ const widget = {
     </div>
   ),
 
-  grid: ({ value, columns = 2, gap = "16px", onClick }: FieldProps) => (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: `repeat(${columns}, 1fr)`,
-        gap,
-        marginBottom: gap,
-      }}
-    >
+  grid: ({
+    value,
+    onClick,
+    columns = 3,
+    gap = "16px",
+    responsive = true,
+    ...props
+  }: FieldProps) => (
+    <GridContainer columns={columns} gap={gap} className="mb-4">
       {Array.isArray(value) &&
         value.map((item, index) => (
           <div
             key={index}
             onClick={onClick}
-            style={{
-              padding: gap,
-              backgroundColor: "rgba(0, 0, 0, 0.3)",
-              border: "1px solid #00ff9f",
-              borderRadius: "4px",
-              color: "#fff",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              textAlign: "center",
-              cursor: onClick ? "pointer" : "default",
-              transition: "all 0.3s ease",
-            }}
-            onMouseOver={(e) => {
-              if (onClick) {
-                e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.4)";
-                e.currentTarget.style.transform = "translateY(-2px)";
-                e.currentTarget.style.boxShadow =
-                  "0 4px 12px rgba(0, 255, 159, 0.2)";
-              }
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.3)";
-              e.currentTarget.style.transform = "none";
-              e.currentTarget.style.boxShadow = "none";
-            }}
-            onMouseDown={(e) => {
-              if (onClick) {
-                e.currentTarget.style.transform = "translateY(0)";
-              }
-            }}
-            onMouseUp={(e) => {
-              if (onClick) {
-                e.currentTarget.style.transform = "translateY(-2px)";
-              }
-            }}
+            className={`bg-cyber-bg border border-cyber-primary rounded text-cyber-text flex flex-col items-center text-center transition-cyber duration-cyber ease-cyber
+              ${responsive ? "sm:p-3 md:p-3.5 lg:p-4" : "p-4"}
+              ${
+                onClick
+                  ? "cursor-pointer hover:bg-cyber-bg-hover hover:transform hover:-translate-y-0.5 hover:shadow-cyber-elevated active:translate-y-0"
+                  : "cursor-default"
+              }`}
           >
             <div
-              style={{
-                width: "64px",
-                height: "64px",
-                backgroundColor: "rgba(0, 255, 159, 0.1)",
-                border: "1px solid #00ff9f",
-                borderRadius: "50%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                marginBottom: gap,
-              }}
+              className={`bg-cyber-primary/10 border border-cyber-primary rounded-full flex items-center justify-center aspect-square
+              ${
+                responsive
+                  ? "sm:w-16 sm:h-16 sm:mb-3 md:w-16 md:h-16 md:mb-3 lg:w-16 lg:h-16 lg:mb-3"
+                  : "w-16 h-16 mb-3"
+              }
+              min-w-[4rem] min-h-[4rem]
+            `}
             >
               {item.avatar ? (
                 <img
                   src={item.avatar}
                   alt={item.title}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    borderRadius: "50%",
-                    objectFit: "cover",
-                  }}
+                  className="w-full h-full rounded-full object-cover object-center"
                 />
               ) : (
-                <span style={{ color: "#00ff9f", fontSize: "24px" }}>
+                <span
+                  className={`text-cyber-primary
+                  ${
+                    responsive
+                      ? "sm:text-xl md:text-2xl lg:text-3xl"
+                      : "text-2xl"
+                  }
+                `}
+                >
                   {item.title.charAt(0)}
                 </span>
               )}
             </div>
             <div
-              style={{
-                color: "#00ff9f",
-                fontSize: "16px",
-                marginBottom: "4px",
-                fontWeight: "500",
-              }}
+              className={`text-cyber-primary mb-1 font-medium
+              ${responsive ? "sm:text-sm md:text-base lg:text-lg" : "text-base"}
+            `}
             >
               {item.title}
             </div>
             <div
-              style={{
-                color: "rgba(255, 255, 255, 0.7)",
-                fontSize: "14px",
-              }}
+              className={`text-cyber-text-secondary
+              ${responsive ? "sm:text-xs md:text-sm lg:text-base" : "text-sm"}
+            `}
             >
               {item.desc}
             </div>
           </div>
         ))}
+    </GridContainer>
+  ),
+
+  menu: ({
+    value: currentValue,
+    setState,
+    enum: options = [],
+    onChange,
+    onClick,
+    responsive = true,
+    ...props
+  }: FieldProps) => (
+    <div
+      className={`bg-cyber-bg border border-cyber-primary rounded flex gap-1 mb-4 w-full
+      ${responsive ? "sm:p-1 md:p-1 lg:p-1" : "p-1"}
+      ${responsive ? "sm:gap-0.5 md:gap-0.5 lg:gap-0.5" : "gap-0.5"}
+    `}
+    >
+      {Array.isArray(options) &&
+        options.map((option) => {
+          const value = typeof option === "object" ? option.value : option;
+          const label = typeof option === "object" ? option.label : option;
+          const isActive = value === currentValue;
+          return (
+            <button
+              key={value}
+              onClick={(e) => {
+                setState?.(value);
+                onChange?.(value);
+                onClick?.(e);
+              }}
+              className={`rounded cursor-pointer transition-cyber duration-cyber ease-cyber outline-none
+                ${
+                  responsive
+                    ? "sm:p-2 sm:px-2.5 md:p-2 md:px-3 lg:p-2 lg:px-3"
+                    : "p-2 px-4"
+                }
+                ${
+                  responsive
+                    ? "sm:text-sm md:text-base lg:text-lg"
+                    : "text-base"
+                }
+                ${
+                  isActive
+                    ? "bg-cyber-primary/15 border border-cyber-primary text-cyber-primary font-medium shadow-cyber"
+                    : "bg-transparent border border-transparent text-cyber-text-secondary hover:bg-cyber-primary/5 hover:border-cyber-primary/30 hover:shadow-cyber"
+                }`}
+            >
+              {label}
+            </button>
+          );
+        })}
     </div>
   ),
 
@@ -517,77 +390,6 @@ const widget = {
     }
     return widget.input(props);
   },
-
-  menu: ({
-    value: currentValue,
-    onChange,
-    onClick,
-    enum: options = [],
-    gap = "16px",
-  }: FieldProps) => (
-    <div
-      style={{
-        marginBottom: gap,
-        padding: "4px",
-        backgroundColor: "rgba(0, 0, 0, 0.3)",
-        border: "1px solid #00ff9f",
-        borderRadius: "4px",
-        display: "flex",
-        gap: "4px",
-      }}
-    >
-      {Array.isArray(options) &&
-        options.map((option) => {
-          const value = typeof option === "object" ? option.value : option;
-          const label = typeof option === "object" ? option.label : option;
-          const isActive = value === currentValue;
-          return (
-            <button
-              key={value}
-              onClick={(e) => {
-                onChange(value);
-                if (onClick) onClick(e);
-              }}
-              style={{
-                padding: "8px 16px",
-                backgroundColor: isActive
-                  ? "rgba(0, 255, 159, 0.15)"
-                  : "transparent",
-                border: `1px solid ${isActive ? "#00ff9f" : "transparent"}`,
-                borderRadius: "4px",
-                color: isActive ? "#00ff9f" : "rgba(255, 255, 255, 0.8)",
-                cursor: "pointer",
-                transition: "all 0.3s ease",
-                outline: "none",
-                fontWeight: isActive ? "500" : "normal",
-                boxShadow: isActive
-                  ? "0 0 15px rgba(0, 255, 159, 0.2)"
-                  : "none",
-              }}
-              onMouseOver={(e) => {
-                if (!isActive) {
-                  e.currentTarget.style.backgroundColor =
-                    "rgba(0, 255, 159, 0.05)";
-                  e.currentTarget.style.border =
-                    "1px solid rgba(0, 255, 159, 0.3)";
-                  e.currentTarget.style.boxShadow =
-                    "0 0 10px rgba(0, 255, 159, 0.1)";
-                }
-              }}
-              onMouseOut={(e) => {
-                if (!isActive) {
-                  e.currentTarget.style.backgroundColor = "transparent";
-                  e.currentTarget.style.border = "1px solid transparent";
-                  e.currentTarget.style.boxShadow = "none";
-                }
-              }}
-            >
-              {label}
-            </button>
-          );
-        })}
-    </div>
-  ),
 };
 
 export default widget;

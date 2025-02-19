@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-[#0a0a0a] min-h-screen font-sans;
+    background-image: 
+      radial-gradient(circle at 50% 50%, rgba(0, 255, 159, 0.1) 0%, transparent 50%),
+      linear-gradient(45deg, rgba(0, 255, 159, 0.05) 25%, transparent 25%),
+      linear-gradient(-45deg, rgba(0, 255, 159, 0.05) 25%, transparent 25%);
+    background-size: 100% 100%, 20px 20px, 20px 20px;
+  }
+}
+
+@keyframes cyber-gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
