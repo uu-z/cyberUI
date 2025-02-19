@@ -90,7 +90,7 @@ const widget = {
               {item.avatar ? (
                 <img
                   src={item.avatar}
-                  alt={item.name}
+                  alt={item.title}
                   style={{
                     width: "100%",
                     height: "100%",
@@ -100,7 +100,7 @@ const widget = {
                 />
               ) : (
                 <span style={{ color: "#00ff9f", fontSize: "20px" }}>
-                  {item.name.charAt(0)}
+                  {item.title.charAt(0)}
                 </span>
               )}
             </div>
@@ -113,7 +113,7 @@ const widget = {
                   fontWeight: "500",
                 }}
               >
-                {item.name}
+                {item.title}
               </div>
               <div
                 style={{
@@ -335,7 +335,7 @@ const widget = {
               {item.avatar ? (
                 <img
                   src={item.avatar}
-                  alt={item.name}
+                  alt={item.title}
                   style={{
                     width: "100%",
                     height: "100%",
@@ -345,7 +345,7 @@ const widget = {
                 />
               ) : (
                 <span style={{ color: "#00ff9f", fontSize: "24px" }}>
-                  {item.name.charAt(0)}
+                  {item.title.charAt(0)}
                 </span>
               )}
             </div>
@@ -357,7 +357,7 @@ const widget = {
                 fontWeight: "500",
               }}
             >
-              {item.name}
+              {item.title}
             </div>
             <div
               style={{

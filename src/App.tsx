@@ -9,8 +9,8 @@ const store = cyber.store({
     role: "user",
     enabled: true,
     users: [
-      { name: "John Doe", desc: "Software Engineer", avatar: "" },
-      { name: "Jane Smith", desc: "Product Manager", avatar: "" },
+      { title: "John Doe", desc: "Software Engineer", avatar: "" },
+      { title: "Jane Smith", desc: "Product Manager", avatar: "" },
     ],
   },
   config: {
