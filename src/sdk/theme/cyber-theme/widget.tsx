@@ -1,11 +1,11 @@
 import type { FieldProps } from "../../types";
 
 const widget = {
-  table: ({ value }: FieldProps) => {
+  table: ({ value, gap = "12px" }: FieldProps) => {
     if (!Array.isArray(value) || value.length === 0) return null;
 
     const headerStyle = {
-      padding: "12px",
+      padding: gap,
       textAlign: "left",
       color: "#00ff9f",
       borderBottom: "1px solid #00ff9f",
@@ -14,7 +14,7 @@ const widget = {
     } as const;
 
     const cellStyle = {
-      padding: "12px",
+      padding: gap,
       color: "#fff",
       borderBottom: "1px solid rgba(0, 255, 159, 0.2)",
     } as const;
@@ -22,7 +22,7 @@ const widget = {
     const tableStyle = {
       width: "100%",
       borderCollapse: "collapse",
-      marginBottom: "16px",
+      marginBottom: gap,
       border: "1px solid #00ff9f",
       borderRadius: "4px",
       overflow: "hidden",
@@ -56,22 +56,28 @@ const widget = {
     );
   },
 
-  list: ({ value }: FieldProps) => (
-    <div style={{ marginBottom: "16px" }}>
+  list: ({ value, columns = 1, gap = "16px" }: FieldProps) => (
+    <div
+      style={{
+        marginBottom: gap,
+        display: "grid",
+        gridTemplateColumns: `repeat(${columns}, 1fr)`,
+        gap,
+      }}
+    >
       {Array.isArray(value) &&
         value.map((item, index) => (
           <div
             key={index}
             style={{
-              padding: "16px",
-              marginBottom: "12px",
+              padding: gap,
               backgroundColor: "rgba(0, 0, 0, 0.3)",
               border: "1px solid #00ff9f",
               borderRadius: "4px",
               color: "#fff",
               display: "flex",
               alignItems: "center",
-              gap: "16px",
+              gap,
             }}
           >
             <div
@@ -129,14 +135,20 @@ const widget = {
     </div>
   ),
 
-  input: ({ value, onChange, required, ...props }: FieldProps) => (
+  input: ({
+    value,
+    onChange,
+    required,
+    gap = "16px",
+    ...props
+  }: FieldProps) => (
     <input
       value={value}
       onChange={(e) => onChange(e.target.value)}
       style={{
         width: "100%",
         padding: "8px 12px",
-        marginBottom: "16px",
+        marginBottom: gap,
         backgroundColor: "rgba(0, 0, 0, 0.3)",
         border: "1px solid #00ff9f",
         borderRadius: "4px",
@@ -148,14 +160,20 @@ const widget = {
     />
   ),
 
-  select: ({ value, onChange, enum: options = [], ...props }: FieldProps) => (
+  select: ({
+    value,
+    onChange,
+    enum: options = [],
+    gap = "16px",
+    ...props
+  }: FieldProps) => (
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
       style={{
         width: "100%",
         padding: "8px 12px",
-        marginBottom: "16px",
+        marginBottom: gap,
         backgroundColor: "rgba(0, 0, 0, 0.3)",
         border: "1px solid #00ff9f",
         borderRadius: "4px",
@@ -164,20 +182,26 @@ const widget = {
       }}
       {...props}
     >
-      {options.map((option) => (
-        <option key={option} value={option}>
-          {option}
-        </option>
-      ))}
+      {Array.isArray(options) &&
+        options.map((option) => {
+          const value = typeof option === "object" ? option.value : option;
+          const label = typeof option === "object" ? option.label : option;
+          return (
+            <option key={value} value={value}>
+              {label}
+            </option>
+          );
+        })}
     </select>
   ),
 
-  radio: ({ value, onChange, ...props }: FieldProps) => (
+  radio: ({ value, onChange, gap = "16px", ...props }: FieldProps) => (
     <div
       style={{
-        marginBottom: "16px",
-        display: "block",
-        gap: "16px",
+        marginBottom: gap,
+        display: "flex",
+        flexDirection: "column",
+        gap,
         padding: "12px 16px",
         backgroundColor: "rgba(0, 0, 0, 0.5)",
         border: "1px solid #00ff9f",
@@ -294,13 +318,13 @@ const widget = {
     </div>
   ),
 
-  grid: ({ value }: FieldProps) => (
+  grid: ({ value, columns = 2, gap = "16px" }: FieldProps) => (
     <div
       style={{
         display: "grid",
-        gridTemplateColumns: "repeat(2, 1fr)",
-        gap: "16px",
-        marginBottom: "16px",
+        gridTemplateColumns: `repeat(${columns}, 1fr)`,
+        gap,
+        marginBottom: gap,
       }}
     >
       {Array.isArray(value) &&
@@ -308,7 +332,7 @@ const widget = {
           <div
             key={index}
             style={{
-              padding: "16px",
+              padding: gap,
               backgroundColor: "rgba(0, 0, 0, 0.3)",
               border: "1px solid #00ff9f",
               borderRadius: "4px",
@@ -329,7 +353,7 @@ const widget = {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                marginBottom: "12px",
+                marginBottom: gap,
               }}
             >
               {item.avatar ? (
@@ -381,6 +405,56 @@ const widget = {
     }
     return widget.input(props);
   },
+
+  menu: ({
+    value: currentValue,
+    onChange,
+    enum: options = [],
+    gap = "16px",
+  }: FieldProps) => (
+    <div
+      style={{
+        marginBottom: gap,
+        padding: "4px",
+        backgroundColor: "rgba(0, 0, 0, 0.3)",
+        border: "1px solid #00ff9f",
+        borderRadius: "4px",
+        display: "flex",
+        gap: "4px",
+      }}
+    >
+      {Array.isArray(options) &&
+        options.map((option) => {
+          const value = typeof option === "object" ? option.value : option;
+          const label = typeof option === "object" ? option.label : option;
+          const isActive = value === currentValue;
+          return (
+            <button
+              key={value}
+              onClick={() => onChange(value)}
+              style={{
+                padding: "8px 16px",
+                backgroundColor: isActive
+                  ? "rgba(0, 255, 159, 0.15)"
+                  : "transparent",
+                border: `1px solid ${isActive ? "#00ff9f" : "transparent"}`,
+                borderRadius: "4px",
+                color: isActive ? "#00ff9f" : "rgba(255, 255, 255, 0.8)",
+                cursor: "pointer",
+                transition: "all 0.3s ease",
+                outline: "none",
+                fontWeight: isActive ? "500" : "normal",
+                boxShadow: isActive
+                  ? "0 0 15px rgba(0, 255, 159, 0.2)"
+                  : "none",
+              }}
+            >
+              {label}
+            </button>
+          );
+        })}
+    </div>
+  ),
 };
 
 export default widget;

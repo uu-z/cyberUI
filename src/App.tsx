@@ -3,30 +3,43 @@ import CyberTheme from "./sdk/theme/cyber-theme";
 
 const cyber = CyberUI({ theme: CyberTheme });
 
-const store = cyber.store({
-  state: {
-    username: "test",
-    role: "user",
-    enabled: true,
-    users: [
-      { title: "John Doe", desc: "Software Engineer", avatar: "" },
-      { title: "Jane Smith", desc: "Product Manager", avatar: "" },
-    ],
-  },
-  config: {
-    username: {
-      required: true,
-    },
-    role: {
-      enum: ["user", "admin", "moderator"],
-    },
-  },
-});
-
 const App = () => {
+  const store = cyber.store({
+    state: {
+      navigation: "setting",
+      username: "test",
+      role: "user",
+      enabled: true,
+      users: [
+        { title: "John Doe", desc: "Software Engineer", avatar: "" },
+        { title: "Jane Smith", desc: "Product Manager", avatar: "" },
+      ],
+    },
+    config: {
+      navigation: {
+        enum: [
+          { label: "Dashboard", value: "dashboard" },
+          { label: "Profile", value: "profile" },
+          { label: "Settings", value: "setting" },
+        ],
+      },
+      username: {
+        required: true,
+      },
+      role: {
+        enum: ["user", "admin", "moderator"],
+      },
+      users: {
+        columns: 2,
+        gap: 10,
+      },
+    },
+  });
   return (
     <div style={containerStyle}>
       <h1 style={titleStyle}>CyberUI Demo</h1>
+
+      <store.widget.navigation.menu />
 
       <store.widget.users.table />
       <store.widget.users.list />

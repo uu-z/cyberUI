@@ -4,7 +4,8 @@ export interface FieldProps {
     value: any;
     onChange: (value: any) => void;
     required?: boolean;
-    enum?: string[];
+    enum?: Array<string | { value: string; label: string }>;
+    columns?: number;
     [key: string]: any;
 }
 
