@@ -9,7 +9,7 @@ export interface FieldProps {
 }
 
 export interface Widget {
-    input: (props: FieldProps) => ReactNode;
-    select: (props: FieldProps) => ReactNode;
-    [key: string]: (props: FieldProps) => ReactNode;
+    input?: (props: FieldProps) => ReactNode;
+    select?: (props: FieldProps) => ReactNode;
+    [key: string]: ((props: FieldProps) => ReactNode) | Record<string, (props?: any) => ReactNode> | undefined;
 }

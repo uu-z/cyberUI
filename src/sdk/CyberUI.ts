@@ -3,9 +3,14 @@ import type { ReactNode } from "react";
 import type { Widget } from "./types";
 import { observer } from "mobx-react-lite";
 
-export const CyberUI = (options: { widege: Widget }) => {
+export const CyberUI = (options: { widget: Widget }) => {
   // Cache for UI components
   const componentCache = new WeakMap();
+
+  type Store<T> = {
+    state: T;
+    setState(key: keyof T, value: any): void;
+  }
 
   const createStore = <T extends Record<string, any>>(config: {
     state: T;
@@ -16,7 +21,7 @@ export const CyberUI = (options: { widege: Widget }) => {
       setState(key: keyof T, value: any) {
         this.state[key] = value;
       }
-    });
+    }) as Store<T>;
 
     // Cache for field proxies
     const fieldProxies = new Map<string, any>();
@@ -31,25 +36,30 @@ export const CyberUI = (options: { widege: Widget }) => {
         const fieldConfig = config.config?.[stateProp as keyof T] || {};
         const fieldProxy = new Proxy({}, {
           get(_, uiProp: string) {
-            const Component = options.widege[uiProp];
-            if (!Component) return undefined;
+            const ComponentOrNested = options.widget[uiProp];
+            if (!ComponentOrNested) return undefined;
 
-            // Get cached component or create new one
-            const cacheKey = { stateProp, uiProp };
-            if (!componentCache.has(cacheKey)) {
-              componentCache.set(cacheKey, observer((props: any): ReactNode =>
-                Component({
-                  value: store.state[stateProp as keyof T],
-                  onChange: (newValue: any) => {
-                    console.log(newValue)
-                    store.setState(stateProp as keyof T, newValue);
-                  },
-                  ...fieldConfig,
-                  ...props
-                })
-              ))
+            if (typeof ComponentOrNested === 'function') {
+              // Handle direct component function
+              const cacheKey = { stateProp, uiProp };
+              if (!componentCache.has(cacheKey)) {
+                componentCache.set(cacheKey, observer((props: any): ReactNode =>
+                  ComponentOrNested({
+                    value: store.state[stateProp as keyof T],
+                    onChange: (newValue: any) => {
+                      console.log(newValue)
+                      store.setState(stateProp as keyof T, newValue);
+                    },
+                    ...fieldConfig,
+                    ...props
+                  })
+                ))
+              }
+              return componentCache.get(cacheKey);
+            } else {
+              // Handle nested object
+              return ComponentOrNested;
             }
-            return componentCache.get(cacheKey);
           }
         });
 
@@ -59,13 +69,13 @@ export const CyberUI = (options: { widege: Widget }) => {
     });
 
     return new Proxy(store, {
-      get(target: typeof store, prop: string | symbol) {
-        if (prop === "state") {
+      get(target: Store<T>, prop: string | symbol) {
+        if (prop === "widget") {
           return stateProxy;
         }
-        return (target as any)[prop];
+        return target[prop as keyof Store<T>];
       }
-    });
+    }) as Store<T> & { widget: Record<keyof T, any> };
   };
 
   return {
