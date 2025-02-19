@@ -1,6 +1,61 @@
-import type { FieldProps } from "./types";
+import type { FieldProps } from "../types";
 
 const defaultWidget = {
+  table: ({ value }: FieldProps) => {
+    if (!Array.isArray(value) || value.length === 0) return null;
+
+    const headerStyle = {
+      padding: "12px",
+      textAlign: "left",
+      color: "#00ff9f",
+      borderBottom: "1px solid #00ff9f",
+      background: "rgba(0, 255, 159, 0.1)",
+      fontWeight: "normal",
+    } as const;
+
+    const cellStyle = {
+      padding: "12px",
+      color: "#fff",
+      borderBottom: "1px solid rgba(0, 255, 159, 0.2)",
+    } as const;
+
+    const tableStyle = {
+      width: "100%",
+      borderCollapse: "collapse",
+      marginBottom: "16px",
+      border: "1px solid #00ff9f",
+      borderRadius: "4px",
+      overflow: "hidden",
+    } as const;
+
+    const columns = Object.keys(value[0]);
+
+    return (
+      <table style={tableStyle}>
+        <thead>
+          <tr>
+            {columns.map((column) => (
+              <th key={column} style={headerStyle}>
+                {column}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {value.map((row, rowIndex) => (
+            <tr key={rowIndex}>
+              {columns.map((column) => (
+                <td key={column} style={cellStyle}>
+                  {String(row[column])}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    );
+  },
+
   list: ({ value }: FieldProps) => (
     <div style={{ marginBottom: "16px" }}>
       {Array.isArray(value) &&
@@ -117,6 +172,128 @@ const defaultWidget = {
     </select>
   ),
 
+  radio: ({ value, onChange, ...props }: FieldProps) => (
+    <div
+      style={{
+        marginBottom: "16px",
+        display: "block",
+        gap: "16px",
+        padding: "12px 16px",
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+        border: "1px solid #00ff9f",
+        borderRadius: "6px",
+        boxShadow: "0 0 10px rgba(0, 255, 159, 0.1)",
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          height: "1px",
+          background:
+            "linear-gradient(90deg, transparent, #00ff9f, transparent)",
+          opacity: 0.5,
+        }}
+      />
+      <label
+        onClick={() => onChange(true)}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "10px",
+          color: value === true ? "#00ff9f" : "rgba(255, 255, 255, 0.8)",
+          cursor: "pointer",
+          padding: "6px 16px",
+          backgroundColor:
+            value === true ? "rgba(0, 255, 159, 0.15)" : "rgba(0, 0, 0, 0.3)",
+          borderRadius: "4px",
+          transition: "all 0.3s ease",
+          border: `1px solid ${value === true ? "#00ff9f" : "transparent"}`,
+          boxShadow:
+            value === true ? "0 0 15px rgba(0, 255, 159, 0.2)" : "none",
+          fontWeight: value === true ? "500" : "normal",
+        }}
+      >
+        <div
+          style={{
+            width: "18px",
+            height: "18px",
+            borderRadius: "50%",
+            border: "2px solid #00ff9f",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            position: "relative",
+            transition: "all 0.2s ease",
+          }}
+        >
+          <div
+            style={{
+              width: "10px",
+              height: "10px",
+              borderRadius: "50%",
+              backgroundColor: "#00ff9f",
+              opacity: value === true ? 1 : 0,
+              transform: value === true ? "scale(1)" : "scale(0)",
+              transition: "all 0.2s ease",
+            }}
+          />
+        </div>
+        True
+      </label>
+      <label
+        onClick={() => onChange(false)}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "10px",
+          color: value === false ? "#00ff9f" : "rgba(255, 255, 255, 0.8)",
+          cursor: "pointer",
+          padding: "6px 16px",
+          backgroundColor:
+            value === false ? "rgba(0, 255, 159, 0.15)" : "rgba(0, 0, 0, 0.3)",
+          borderRadius: "4px",
+          transition: "all 0.3s ease",
+          border: `1px solid ${value === false ? "#00ff9f" : "transparent"}`,
+          boxShadow:
+            value === false ? "0 0 15px rgba(0, 255, 159, 0.2)" : "none",
+          fontWeight: value === false ? "500" : "normal",
+        }}
+      >
+        <div
+          style={{
+            width: "18px",
+            height: "18px",
+            borderRadius: "50%",
+            border: "2px solid #00ff9f",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            position: "relative",
+            transition: "all 0.2s ease",
+          }}
+        >
+          <div
+            style={{
+              width: "10px",
+              height: "10px",
+              borderRadius: "50%",
+              backgroundColor: "#00ff9f",
+              opacity: value === false ? 1 : 0,
+              transform: value === false ? "scale(1)" : "scale(0)",
+              transition: "all 0.2s ease",
+            }}
+          />
+        </div>
+        False
+      </label>
+    </div>
+  ),
+
   grid: ({ value }: FieldProps) => (
     <div
       style={{
@@ -194,6 +371,16 @@ const defaultWidget = {
         ))}
     </div>
   ),
+
+  auto: (props: FieldProps) => {
+    if (typeof props.value === "boolean") {
+      return defaultWidget.radio(props);
+    }
+    if (props.enum && Array.isArray(props.enum)) {
+      return defaultWidget.select(props);
+    }
+    return defaultWidget.input(props);
+  },
 };
 
 export default defaultWidget;

@@ -1,13 +1,26 @@
 import { makeAutoObservable } from "mobx";
 import type { Widget } from "./types";
 import { createWidgetModule } from "./modules/widget";
+import { createPluginModule, type Plugin } from "./modules/plugin";
 
 export type Store<T> = {
   state: T;
   setState(key: keyof T, value: any): void;
 }
 
-export const CyberUI = (options: { widget: Widget }) => {
+export type StoreWithModules<T> = Store<T> & {
+  widget: Record<keyof T, any>;
+  plugin: {
+    Json: () => JSX.Element;
+    Debug: () => JSX.Element;
+    Table: () => JSX.Element;
+  };
+}
+
+export const CyberUI = (options: {
+  widget: Widget;
+  plugin: Plugin;
+}) => {
   const createStore = <T extends Record<string, any>>(config: {
     state: T;
     config?: Partial<Record<keyof T, any>>;
@@ -26,20 +39,24 @@ export const CyberUI = (options: { widget: Widget }) => {
       config: config.config
     });
 
+    // Create plugin module
+    const pluginModule = createPluginModule({
+      plugin: options.plugin,
+      store
+    });
+
     // Return store with modules
     return new Proxy(store, {
       get(target: Store<T>, prop: string | symbol) {
         if (prop === "widget") {
           return widgetModule;
         }
+        if (prop === "plugin") {
+          return pluginModule;
+        }
         return target[prop as keyof Store<T>];
       }
-    }) as Store<T> & {
-      widget: Record<keyof T, any>;
-      // Future modules can be added here like:
-      // form: Record<keyof T, any>;
-      // table: Record<keyof T, any>;
-    };
+    }) as StoreWithModules<T>;
   };
 
   return {
