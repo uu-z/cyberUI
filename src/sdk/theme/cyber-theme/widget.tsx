@@ -56,7 +56,7 @@ const widget = {
     );
   },
 
-  list: ({ value, columns = 1, gap = "16px" }: FieldProps) => (
+  list: ({ value, columns = 1, gap = "16px", onClick }: FieldProps) => (
     <div
       style={{
         marginBottom: gap,
@@ -69,6 +69,7 @@ const widget = {
         value.map((item, index) => (
           <div
             key={index}
+            onClick={onClick}
             style={{
               padding: gap,
               backgroundColor: "rgba(0, 0, 0, 0.3)",
@@ -78,6 +79,21 @@ const widget = {
               display: "flex",
               alignItems: "center",
               gap,
+              cursor: onClick ? "pointer" : "default",
+              transition: "all 0.3s ease",
+            }}
+            onMouseOver={(e) => {
+              if (onClick) {
+                e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.4)";
+                e.currentTarget.style.transform = "translateY(-2px)";
+                e.currentTarget.style.boxShadow =
+                  "0 4px 12px rgba(0, 255, 159, 0.2)";
+              }
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.3)";
+              e.currentTarget.style.transform = "none";
+              e.currentTarget.style.boxShadow = "none";
             }}
           >
             <div
@@ -138,6 +154,7 @@ const widget = {
   input: ({
     value,
     onChange,
+    onClick,
     required,
     gap = "16px",
     ...props
@@ -145,6 +162,7 @@ const widget = {
     <input
       value={value}
       onChange={(e) => onChange(e.target.value)}
+      onClick={onClick}
       style={{
         width: "100%",
         padding: "8px 12px",
@@ -154,6 +172,24 @@ const widget = {
         borderRadius: "4px",
         color: "#fff",
         outline: "none",
+        transition: "all 0.3s ease",
+        cursor: onClick ? "pointer" : "text",
+      }}
+      onMouseOver={(e) => {
+        e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.4)";
+        e.currentTarget.style.boxShadow = "0 0 10px rgba(0, 255, 159, 0.2)";
+      }}
+      onMouseOut={(e) => {
+        e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.3)";
+        e.currentTarget.style.boxShadow = "none";
+      }}
+      onFocus={(e) => {
+        e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+        e.currentTarget.style.boxShadow = "0 0 15px rgba(0, 255, 159, 0.3)";
+      }}
+      onBlur={(e) => {
+        e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.3)";
+        e.currentTarget.style.boxShadow = "none";
       }}
       required={required}
       {...props}
@@ -163,6 +199,7 @@ const widget = {
   select: ({
     value,
     onChange,
+    onClick,
     enum: options = [],
     gap = "16px",
     ...props
@@ -170,6 +207,7 @@ const widget = {
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
+      onClick={onClick}
       style={{
         width: "100%",
         padding: "8px 12px",
@@ -179,6 +217,24 @@ const widget = {
         borderRadius: "4px",
         color: "#fff",
         outline: "none",
+        cursor: "pointer",
+        transition: "all 0.3s ease",
+      }}
+      onMouseOver={(e) => {
+        e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.4)";
+        e.currentTarget.style.boxShadow = "0 0 10px rgba(0, 255, 159, 0.2)";
+      }}
+      onMouseOut={(e) => {
+        e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.3)";
+        e.currentTarget.style.boxShadow = "none";
+      }}
+      onFocus={(e) => {
+        e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+        e.currentTarget.style.boxShadow = "0 0 15px rgba(0, 255, 159, 0.3)";
+      }}
+      onBlur={(e) => {
+        e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.3)";
+        e.currentTarget.style.boxShadow = "none";
       }}
       {...props}
     >
@@ -195,7 +251,7 @@ const widget = {
     </select>
   ),
 
-  radio: ({ value, onChange, gap = "16px", ...props }: FieldProps) => (
+  radio: ({ value, onChange, onClick, gap = "16px", ...props }: FieldProps) => (
     <div
       style={{
         marginBottom: gap,
@@ -224,7 +280,10 @@ const widget = {
         }}
       />
       <label
-        onClick={() => onChange(true)}
+        onClick={(e) => {
+          onChange(true);
+          if (onClick) onClick(e);
+        }}
         style={{
           display: "flex",
           alignItems: "center",
@@ -240,6 +299,18 @@ const widget = {
           boxShadow:
             value === true ? "0 0 15px rgba(0, 255, 159, 0.2)" : "none",
           fontWeight: value === true ? "500" : "normal",
+        }}
+        onMouseOver={(e) => {
+          if (value !== true) {
+            e.currentTarget.style.backgroundColor = "rgba(0, 255, 159, 0.05)";
+            e.currentTarget.style.boxShadow = "0 0 10px rgba(0, 255, 159, 0.1)";
+          }
+        }}
+        onMouseOut={(e) => {
+          if (value !== true) {
+            e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.3)";
+            e.currentTarget.style.boxShadow = "none";
+          }
         }}
       >
         <div
@@ -270,7 +341,10 @@ const widget = {
         True
       </label>
       <label
-        onClick={() => onChange(false)}
+        onClick={(e) => {
+          onChange(false);
+          if (onClick) onClick(e);
+        }}
         style={{
           display: "flex",
           alignItems: "center",
@@ -286,6 +360,18 @@ const widget = {
           boxShadow:
             value === false ? "0 0 15px rgba(0, 255, 159, 0.2)" : "none",
           fontWeight: value === false ? "500" : "normal",
+        }}
+        onMouseOver={(e) => {
+          if (value !== false) {
+            e.currentTarget.style.backgroundColor = "rgba(0, 255, 159, 0.05)";
+            e.currentTarget.style.boxShadow = "0 0 10px rgba(0, 255, 159, 0.1)";
+          }
+        }}
+        onMouseOut={(e) => {
+          if (value !== false) {
+            e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.3)";
+            e.currentTarget.style.boxShadow = "none";
+          }
         }}
       >
         <div
@@ -318,7 +404,7 @@ const widget = {
     </div>
   ),
 
-  grid: ({ value, columns = 2, gap = "16px" }: FieldProps) => (
+  grid: ({ value, columns = 2, gap = "16px", onClick }: FieldProps) => (
     <div
       style={{
         display: "grid",
@@ -331,6 +417,7 @@ const widget = {
         value.map((item, index) => (
           <div
             key={index}
+            onClick={onClick}
             style={{
               padding: gap,
               backgroundColor: "rgba(0, 0, 0, 0.3)",
@@ -341,6 +428,31 @@ const widget = {
               flexDirection: "column",
               alignItems: "center",
               textAlign: "center",
+              cursor: onClick ? "pointer" : "default",
+              transition: "all 0.3s ease",
+            }}
+            onMouseOver={(e) => {
+              if (onClick) {
+                e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.4)";
+                e.currentTarget.style.transform = "translateY(-2px)";
+                e.currentTarget.style.boxShadow =
+                  "0 4px 12px rgba(0, 255, 159, 0.2)";
+              }
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.3)";
+              e.currentTarget.style.transform = "none";
+              e.currentTarget.style.boxShadow = "none";
+            }}
+            onMouseDown={(e) => {
+              if (onClick) {
+                e.currentTarget.style.transform = "translateY(0)";
+              }
+            }}
+            onMouseUp={(e) => {
+              if (onClick) {
+                e.currentTarget.style.transform = "translateY(-2px)";
+              }
             }}
           >
             <div
@@ -409,6 +521,7 @@ const widget = {
   menu: ({
     value: currentValue,
     onChange,
+    onClick,
     enum: options = [],
     gap = "16px",
   }: FieldProps) => (
@@ -431,7 +544,10 @@ const widget = {
           return (
             <button
               key={value}
-              onClick={() => onChange(value)}
+              onClick={(e) => {
+                onChange(value);
+                if (onClick) onClick(e);
+              }}
               style={{
                 padding: "8px 16px",
                 backgroundColor: isActive
@@ -447,6 +563,23 @@ const widget = {
                 boxShadow: isActive
                   ? "0 0 15px rgba(0, 255, 159, 0.2)"
                   : "none",
+              }}
+              onMouseOver={(e) => {
+                if (!isActive) {
+                  e.currentTarget.style.backgroundColor =
+                    "rgba(0, 255, 159, 0.05)";
+                  e.currentTarget.style.border =
+                    "1px solid rgba(0, 255, 159, 0.3)";
+                  e.currentTarget.style.boxShadow =
+                    "0 0 10px rgba(0, 255, 159, 0.1)";
+                }
+              }}
+              onMouseOut={(e) => {
+                if (!isActive) {
+                  e.currentTarget.style.backgroundColor = "transparent";
+                  e.currentTarget.style.border = "1px solid transparent";
+                  e.currentTarget.style.boxShadow = "none";
+                }
               }}
             >
               {label}

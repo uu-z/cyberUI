@@ -36,9 +36,16 @@ export function createWidgetModule<T extends Record<string, any>>(options: {
                             componentCache.set(cacheKey, observer((props: any): ReactNode =>
                                 ComponentOrNested({
                                     value: options.store.state[stateProp as keyof T],
-                                    onChange: (newValue: any) => {
-                                        console.log(newValue)
+                                    onChange: (newValue: any, field?: string) => {
                                         options.store.setState(stateProp as keyof T, newValue);
+                                        if (fieldConfig.onChange) {
+                                            fieldConfig.onChange(newValue, field || stateProp);
+                                        }
+                                    },
+                                    onClick: (event: any) => {
+                                        if (fieldConfig.onClick) {
+                                            fieldConfig.onClick(event, stateProp);
+                                        }
                                     },
                                     ...fieldConfig,
                                     ...props

@@ -32,6 +32,10 @@ const App = () => {
       users: {
         columns: 2,
         gap: 10,
+        onChange(newVal: any) {},
+        onClick() {
+          console.log("on click");
+        },
       },
     },
   });

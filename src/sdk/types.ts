@@ -2,7 +2,8 @@ import type { ReactNode } from "react";
 
 export interface FieldProps {
     value: any;
-    onChange: (value: any) => void;
+    onChange: (value: any, field?: string) => void;
+    onClick?: (event: any) => void;
     required?: boolean;
     enum?: Array<string | { value: string; label: string }>;
     columns?: number;
