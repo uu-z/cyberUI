@@ -1,7 +1,7 @@
 import React from "react";
-import type { Plugin } from "./plugin";
+import type { Plugin } from "../../modules/plugin";
 
-const defaultPlugin: Plugin = {
+const plugin: Plugin = {
   Json: ({ value }) => (
     <pre style={{ color: "#00ff9f" }}>{JSON.stringify(value, null, 2)}</pre>
   ),
@@ -103,4 +103,4 @@ const defaultPlugin: Plugin = {
   ),
 };
 
-export default defaultPlugin;
+export default plugin;

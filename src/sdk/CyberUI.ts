@@ -10,16 +10,14 @@ export type Store<T> = {
 
 export type StoreWithModules<T> = Store<T> & {
   widget: Record<keyof T, any>;
-  plugin: {
-    Json: () => JSX.Element;
-    Debug: () => JSX.Element;
-    Table: () => JSX.Element;
-  };
+  plugin: Record<string, any>
 }
 
 export const CyberUI = (options: {
-  widget: Widget;
-  plugin: Plugin;
+  theme: {
+    widget: Widget;
+    plugin: Plugin;
+  }
 }) => {
   const createStore = <T extends Record<string, any>>(config: {
     state: T;
@@ -34,14 +32,14 @@ export const CyberUI = (options: {
 
     // Create widget module
     const widgetModule = createWidgetModule({
-      widget: options.widget,
+      widget: options.theme.widget,
       store,
       config: config.config
     });
 
     // Create plugin module
     const pluginModule = createPluginModule({
-      plugin: options.plugin,
+      plugin: options.theme.plugin,
       store
     });
 

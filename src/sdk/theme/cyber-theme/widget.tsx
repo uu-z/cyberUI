@@ -1,6 +1,6 @@
-import type { FieldProps } from "../types";
+import type { FieldProps } from "../../types";
 
-const defaultWidget = {
+const widget = {
   table: ({ value }: FieldProps) => {
     if (!Array.isArray(value) || value.length === 0) return null;
 
@@ -374,13 +374,13 @@ const defaultWidget = {
 
   auto: (props: FieldProps) => {
     if (typeof props.value === "boolean") {
-      return defaultWidget.radio(props);
+      return widget.radio(props);
     }
     if (props.enum && Array.isArray(props.enum)) {
-      return defaultWidget.select(props);
+      return widget.select(props);
     }
-    return defaultWidget.input(props);
+    return widget.input(props);
   },
 };
 
-export default defaultWidget;
+export default widget;

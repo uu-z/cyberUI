@@ -1,8 +1,7 @@
 import { CyberUI } from "./sdk/CyberUI";
-import defaultWidget from "./sdk/modules/defaultWidget";
-import defaultPlugin from "./sdk/modules/defaultPlugin";
+import CyberTheme from "./sdk/theme/cyber-theme";
 
-const cyber = CyberUI({ widget: defaultWidget, plugin: defaultPlugin });
+const cyber = CyberUI({ theme: CyberTheme });
 
 const store = cyber.store({
   state: {
